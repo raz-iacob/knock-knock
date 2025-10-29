@@ -17,12 +17,23 @@ new class extends Component
 
     public bool $success = false;
 
-    public array $instructionSet = [];
-    
+    public array $instructions = [];
 
     public function run()
     {
-       // do something
+        $this->restart();
+        foreach($this->instructions as $instruction) {
+            $method = $instruction['method'];
+            if(method_exists($this, $method)) {
+                $this->$method();
+                $this->stream(  
+                    to: 'player',
+                    content: $this->position,
+                    replace: true,
+                );
+                sleep(1);
+            }
+        }
     }
 
     public function up()
@@ -87,13 +98,23 @@ new class extends Component
         }
     }
 
-    public function rotate()
+    public function rotateRight()
     {
         $this->direction = match($this->direction) {
             'up' => 'right',
             'right' => 'down',
             'down' => 'left',
             'left' => 'up',
+        };
+    }
+
+    public function rotateLeft()
+    {
+        $this->direction = match($this->direction) {
+            'up' => 'left',
+            'left' => 'down',
+            'down' => 'right',
+            'right' => 'up',
         };
     }
 
@@ -107,6 +128,7 @@ new class extends Component
     public function restart()
     {
         $this->position = ['x' => 2, 'y' => 2];
+        $this->direction = 'down';
         $this->success = false;
     }
 };
@@ -117,11 +139,14 @@ new class extends Component
         <h2 class="mb-3 font-semibold text-3xl">{{ $name }}</h2>
         <div class="flex items-center justify-center gap-25">
             <div>
-                <x-objective />
-                <livewire:workspace />
-                <button class="bg-blue-500 flex items-center justify-center text-white rounded size-16" wire:click="run">Run</button>
+                <div class="mb-4 p-4">
+                    <p>Build the instruction set to get the player to the treasure.</p>
+                    <p>Press RUN when you're ready.</p>
+                </div>
+                <livewire:workspace wire:model.live="instructions" />
+                <button class="bg-blue-500 flex items-center justify-center text-white rounded-md w-full text-center h-10 mt-4" wire:click="run">Run</button>
             </div>
-            <div class="relative" style="background-image: url('https://i.imgur.com/Xf3Idv5.jpg');">
+            <div class="relative" style="background-image: url('https://i.imgur.com/Xf3Idv5.jpg');" wire:stream="player">
                 <livewire:map :cols="$board[0]" :rows="$board[1]" />
 
                 <div class="absolute top-0 left-0 transform z-20 transition-all p-1"
@@ -164,11 +189,6 @@ new class extends Component
             case 'ArrowRight':
                 event.preventDefault();
                 this.$call('right')
-                break;
-            case 'R':
-            case 'r':
-                event.preventDefault();
-                this.$call('rotate')
                 break;
             case 'Enter':
                 event.preventDefault();
