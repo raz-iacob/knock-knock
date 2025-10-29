@@ -5,7 +5,7 @@ use Livewire\Attributes\Reactive;
 
 new class extends Component
 {
-    public int $size = 78;
+    
 };
 ?>
 
