@@ -15,7 +15,6 @@ new class extends Component
 
     public bool $success = false;
 
-    #[On('playerUp')] 
     public function up()
     {
         if($this->player['x'] <= 0) {
@@ -27,7 +26,6 @@ new class extends Component
         $this->checkTargetReached();
     }
 
-    #[On('playerDown')]
     public function down()
     {
         if($this->player['x'] >= $this->board[1] - 1) {
@@ -39,7 +37,6 @@ new class extends Component
         $this->checkTargetReached();
     }
 
-    #[On('playerLeft')]
     public function left()
     {
         if($this->player['y'] <= 0) {
@@ -51,7 +48,6 @@ new class extends Component
         $this->checkTargetReached();
     }
 
-    #[On('playerRight')]
     public function right()
     {
         if($this->player['y'] >= $this->board[0] - 1) {
@@ -68,6 +64,12 @@ new class extends Component
         if($this->player['x'] === $this->target['x'] && $this->player['y'] === $this->target['y']) {
             $this->success = true;
         }
+    }
+
+    public function restart()
+    {
+        $this->player = ['x' => 2, 'y' => 2];
+        $this->success = false;
     }
 };
 ?>
@@ -101,26 +103,29 @@ new class extends Component
     </div>
 </div>
 
-@assets
 <script>
-    document.addEventListener('livewire:init', () => {
-        window.addEventListener('keydown', (event) => {
-            event.preventDefault();
-            switch(event.key) {
-                case 'ArrowUp':
-                    Livewire.dispatch('playerUp')
-                    break;
-                case 'ArrowDown':
-                    Livewire.dispatch('playerDown')
-                    break;
-                case 'ArrowLeft':
-                    Livewire.dispatch('playerLeft')
-                    break;
-                case 'ArrowRight':
-                    Livewire.dispatch('playerRight')
-                    break;
-            }
-        });
+    window.addEventListener('keydown', (event) => {
+        switch(event.key) {
+            case 'ArrowUp':
+                event.preventDefault();
+                this.$call('up')
+                break;
+            case 'ArrowDown':
+                event.preventDefault();
+                this.$call('down')
+                break;
+            case 'ArrowLeft':
+                event.preventDefault();
+                this.$call('left')
+                break;
+            case 'ArrowRight':
+                event.preventDefault();
+                this.$call('right')
+                break;
+            case 'Escape':
+                event.preventDefault();
+                this.$call('restart')
+                break;
+        }
     });
 </script>
-@endassets
