@@ -10,10 +10,15 @@ new class extends Component
 
     public array $board = [8, 8];
 
-    public array $player = ['x' => 2, 'y' => 2];
+    public string $direction = 'down';
+
+    public array $position = ['x' => 2, 'y' => 2];
     public array $target = ['x' => 5, 'y' => 5];
 
     public bool $success = false;
+
+    public array $instructionSet = [];
+    
 
     public function run()
     {
@@ -22,58 +27,86 @@ new class extends Component
 
     public function up()
     {
-        if($this->player['x'] <= 0) {
+        if($this->position['x'] <= 0) {
             return;
         }
 
-        $this->player['x']--;
+        $this->position['x']--;
 
         $this->checkTargetReached();
     }
 
     public function down()
     {
-        if($this->player['x'] >= $this->board[1] - 1) {
+        if($this->position['x'] >= $this->board[1] - 1) {
             return;
         }
 
-        $this->player['x']++;
+        $this->position['x']++;
 
         $this->checkTargetReached();
     }
 
     public function left()
     {
-        if($this->player['y'] <= 0) {
+        if($this->position['y'] <= 0) {
             return;
         }
 
-        $this->player['y']--;
+        $this->position['y']--;
 
         $this->checkTargetReached();
     }
 
     public function right()
     {
-        if($this->player['y'] >= $this->board[0] - 1) {
+        if($this->position['y'] >= $this->board[0] - 1) {
             return;
         }
 
-        $this->player['y']++;
+        $this->position['y']++;
 
         $this->checkTargetReached();
     }
 
+    public function move()
+    {
+        switch($this->direction) {
+            case 'up':
+                $this->up();
+                break;
+            case 'down':
+                $this->down();
+                break;
+            case 'left':
+                $this->left();
+                break;
+            case 'right':
+                $this->right();
+                break;
+        }
+    }
+
+    public function rotate()
+    {
+        $this->direction = match($this->direction) {
+            'up' => 'right',
+            'right' => 'down',
+            'down' => 'left',
+            'left' => 'up',
+        };
+    }
+
     public function checkTargetReached()
     {
-        if($this->player['x'] === $this->target['x'] && $this->player['y'] === $this->target['y']) {
+        if($this->position['x'] === $this->target['x'] && $this->position['y'] === $this->target['y']) {
             $this->success = true;
         }
     }
 
     public function restart()
     {
-        $this->player = ['x' => 2, 'y' => 2];
+        $this->position = ['x' => 2, 'y' => 2];
         $this->success = false;
     }
 };
@@ -92,8 +125,8 @@ new class extends Component
                 <livewire:map :cols="$board[0]" :rows="$board[1]" />
 
                 <div class="absolute top-0 left-0 transform z-20 transition-all p-1"
-                    style="transform: translate({{ $player['y'] * 80 }}px, {{ $player['x'] * 80 }}px);">
-                    <livewire:player />
+                    style="transform: translate({{ $position['y'] * 80 }}px, {{ $position['x'] * 80 }}px);">
+                    <livewire:player :facing="$direction" />
                 </div>
 
                 <div class="absolute top-0 left-0 transform z-10 transition-all p-1"
@@ -131,6 +164,15 @@ new class extends Component
             case 'ArrowRight':
                 event.preventDefault();
                 this.$call('right')
+                break;
+            case 'R':
+            case 'r':
+                event.preventDefault();
+                this.$call('rotate')
+                break;
+            case 'Enter':
+                event.preventDefault();
+                this.$call('move')
                 break;
             case 'Escape':
                 event.preventDefault();

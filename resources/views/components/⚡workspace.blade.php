@@ -4,17 +4,14 @@ use Livewire\Component;
 
 new class extends Component {
     public $palette = [];
-    public $instructionSet = [];
+
+    public array $instructions = [];
 
     public function mount()
     {
         $this->palette = [
-            ['id' => 1, 'type' => 'motion', 'label' => 'move forward'],
-            ['id' => 2, 'type' => 'motion', 'label' => 'turn right'],
-            ['id' => 3, 'type' => 'control', 'label' => 'repeat'],
-        ];
-        $this->instructionSet = [
-            ['id' => 4, 'type' => 'event', 'label' => 'on run'],
+            ['id' => 1, 'method' => 'move', 'label' => 'Move forward'],
+            ['id' => 2, 'method' => 'rotate', 'label' => 'Rotate'],
         ];
     }
 };
@@ -22,5 +19,5 @@ new class extends Component {
 
 <div class="flex flex-col md:flex-row gap-8 w-full max-w-5xl">
     <livewire:palette :blocks="$palette"/>
-    <livewire:instruction-set :blocks="$instructionSet"/>
+    <livewire:instruction-set :blocks="$instructions"/>
 </div>

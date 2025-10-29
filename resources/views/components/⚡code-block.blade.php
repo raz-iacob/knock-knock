@@ -14,18 +14,18 @@ new class extends Component
 ?>
 
 @php
-    $typeClasses = [
-        'motion' => 'bg-blue-400',
+    $instructionClasses = [
+        'move' => 'bg-blue-400',
         'looks' => 'bg-purple-500',
         'sound' => 'bg-pink-400',
         'event' => 'bg-yellow-300 text-gray-900',
-        'control' => 'bg-orange-400',
+        'rotate' => 'bg-orange-400',
         'sensing' => 'bg-cyan-400',
         'operator' => 'bg-green-500',
         'variable' => 'bg-orange-600',
         'default' => 'bg-gray-300',
     ];
-    $blockClass = $typeClasses[$this->data['type']] ?? $typeClasses['default'];
+    $blockClass = $instructionClasses[$this->data['method']] ?? $instructionClasses['default'];
     $textClass = str_contains($blockClass, 'text-gray-900') ? 'text-gray-900' : 'text-white';
 @endphp
 

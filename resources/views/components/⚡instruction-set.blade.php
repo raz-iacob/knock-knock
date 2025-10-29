@@ -30,7 +30,7 @@ new class extends Component {
         "
     >
         @foreach ($blocks as $block)
-            <livewire:code-block :data="$block" wire:key="canvas-block-{{ $block['id'] }}"/>
+            <livewire:code-block :data="$block" wire:key="instruction-{{ $block['id'] }}"/>
         @endforeach
     </div>
 </div>
