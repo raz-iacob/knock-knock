@@ -15,12 +15,17 @@ new class extends Component
 
     public bool $success = false;
 
+    public function run()
+    {
+       // do something
+    }
+
     public function up()
     {
         if($this->player['x'] <= 0) {
             return;
         }
-        
+
         $this->player['x']--;
 
         $this->checkTargetReached();
@@ -78,6 +83,11 @@ new class extends Component
     <div class="flex inset-0 justify-center items-center flex-col p-6 gap-6">
         <h2 class="mb-3 font-semibold text-3xl">{{ $name }}</h2>
         <div class="flex items-center justify-center gap-25">
+            <div>
+                <x-objective />
+                <livewire:workspace />
+                <button class="bg-blue-500 flex items-center justify-center text-white rounded size-16" wire:click="run">Run</button>
+            </div>
             <div class="relative" style="background-image: url('https://i.imgur.com/Xf3Idv5.jpg');">
                 <livewire:map :cols="$board[0]" :rows="$board[1]" />
 
