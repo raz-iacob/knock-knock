@@ -2,10 +2,9 @@
 
 use Livewire\Component;
 
-new class extends Component
-{
+new class extends Component {
     public $palette = [];
-    public $canvas = [];
+    public $instructionSet = [];
 
     public function mount()
     {
@@ -14,7 +13,7 @@ new class extends Component
             ['id' => 2, 'type' => 'motion', 'label' => 'turn right'],
             ['id' => 3, 'type' => 'control', 'label' => 'repeat'],
         ];
-        $this->canvas = [
+        $this->instructionSet = [
             ['id' => 4, 'type' => 'event', 'label' => 'on run'],
         ];
     }
@@ -22,6 +21,6 @@ new class extends Component
 ?>
 
 <div class="flex flex-col md:flex-row gap-8 w-full max-w-5xl">
-    <livewire:palette :blocks="$palette" />
-    <livewire:canvas :blocks="$canvas" />
+    <livewire:palette :blocks="$palette"/>
+    <livewire:instruction-set :blocks="$instructionSet"/>
 </div>
