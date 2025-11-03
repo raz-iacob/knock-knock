@@ -15,7 +15,7 @@ new class extends Component
 
 @php
     $instructionClasses = [
-        'move' => 'bg-blue-400',
+        'moveForward' => 'bg-blue-400',
         'looks' => 'bg-purple-500',
         'sound' => 'bg-pink-400',
         'event' => 'bg-yellow-300 text-gray-900',
@@ -35,6 +35,7 @@ new class extends Component
     class="inline-block min-w-[180px] rounded-xl px-5 py-3 font-semibold shadow-md text-base font-sans {{ $blockClass }} {{ $textClass }} select-none"
     draggable="true"
     @dragstart="event.dataTransfer.setData('block', JSON.stringify(@js($data)))"
+    wire:sort:item="{{ $data['id'] }}"
 >
     <span>
         {{ $data['label'] }}

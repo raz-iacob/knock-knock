@@ -26,12 +26,12 @@ new class extends Component
             $method = $instruction['method'];
             if(method_exists($this, $method)) {
                 $this->$method();
-                $this->stream(  
-                    to: 'player',
-                    content: $this->position,
-                    replace: true,
-                );
-                sleep(1);
+//                $this->stream(
+//                    to: 'player',
+//                    content: $this->position,
+//                    replace: true,
+//                );
+//                sleep(1);
             }
         }
     }
@@ -80,7 +80,7 @@ new class extends Component
         $this->checkTargetReached();
     }
 
-    public function move()
+    public function moveForward()
     {
         switch($this->direction) {
             case 'up':
@@ -146,7 +146,7 @@ new class extends Component
                 <livewire:workspace wire:model.live="instructions" />
                 <button class="bg-blue-500 flex items-center justify-center text-white rounded-md w-full text-center h-10 mt-4" wire:click="run">Run</button>
             </div>
-            <div class="relative" style="background-image: url('https://i.imgur.com/Xf3Idv5.jpg');" wire:stream="player">
+            <div class="relative" style="background-image: url('https://i.imgur.com/Xf3Idv5.jpg');">
                 <livewire:map :cols="$board[0]" :rows="$board[1]" />
 
                 <div class="absolute top-0 left-0 transform z-20 transition-all p-1"
@@ -174,25 +174,19 @@ new class extends Component
 <script>
     window.addEventListener('keydown', (event) => {
         switch(event.key) {
-            case 'ArrowUp':
-                event.preventDefault();
-                this.$call('up')
-                break;
-            case 'ArrowDown':
-                event.preventDefault();
-                this.$call('down')
-                break;
             case 'ArrowLeft':
                 event.preventDefault();
-                this.$call('left')
+                this.$call('rotateLeft')
                 break;
             case 'ArrowRight':
                 event.preventDefault();
-                this.$call('right')
+                this.$call('rotateRight')
                 break;
-            case 'Enter':
+            case 'W':
+            case 'w':
+            case 'ArrowUp':
                 event.preventDefault();
-                this.$call('move')
+                this.$call('moveForward')
                 break;
             case 'Escape':
                 event.preventDefault();

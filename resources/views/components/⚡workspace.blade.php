@@ -5,7 +5,7 @@ use Livewire\Attributes\Modelable;
 use Livewire\Attributes\Renderless;
 
 new class extends Component {
-    public $palette = [];
+    public array $palette = [];
 
     #[Modelable]
     public array $instructions = [];
@@ -13,21 +13,38 @@ new class extends Component {
     public function mount()
     {
         $this->palette = [
-            ['id' => 1, 'method' => 'move', 'label' => 'Move Forward'],
+            ['id' => 1, 'method' => 'moveForward', 'label' => 'Move Forward'],
             ['id' => 2, 'method' => 'rotateRight', 'label' => 'Turn Right'],
             ['id' => 3, 'method' => 'rotateLeft', 'label' => 'Turn Left'],
         ];
     }
 
-    #[Renderless]
-    public function saveOrder($orderedIds)
+    public function repositionInstruction($instructionId, $position)
     {
-        // save order
+        $index = array_search($instructionId, array_column($this->instructions, 'id'));
+        if ($index === false) {
+            return; // Item not found
+        }
+
+        // Remove the item from its current position
+        $instruction = $this->instructions[$index];
+        array_splice($this->instructions, $index, 1);
+
+        // Clamp the new position within bounds
+        $position = max(0, min($position, count($this->instructions)));
+
+        // Insert the item at the new position
+        array_splice($this->instructions, $position, 0, [$instruction]);
     }
+
 
     public function add($instruction)
     {
+        if ($instruction['id'] > 10000) { // this is a dragged element (@todo: this is terrible. please fix)
+            return;
+        }
         $instruction['id'] = now()->timestamp . rand(1000, 9999);
+
         $this->instructions[] = $instruction;
     }
 };
@@ -37,7 +54,7 @@ new class extends Component {
     <div class="p-6 bg-gray-100 rounded-2xl min-h-[300px] flex flex-col gap-2">
         <h2 class="text-lg font-bold mb-2">Palette</h2>
         @foreach($palette as $block)
-            <livewire:code-block :data="$block" wire:key="palette-block-{{ $block['id'] }}" />
+            <livewire:code-block :data="$block" wire:key="palette-block-{{ $block['id'] }}"/>
         @endforeach
     </div>
     <div class="w-full md:w-2/3">
@@ -50,11 +67,10 @@ new class extends Component {
                 const block = JSON.parse(event.dataTransfer.getData('block'));
                 $wire.add(block);
             "
-            wire:sort="saveOrder"
-
+            wire:sort="repositionInstruction"
         >
             @foreach ($instructions as $instruction)
-                <livewire:code-block :data="$instruction" wire:key="instruction-{{ $instruction['id'] }}" wire:sort:item="{{ $instruction['id'] }}"/>
+                <livewire:code-block :data="$instruction" wire:key="instruction-{{ $instruction['id'] }}"/>
             @endforeach
         </div>
     </div>
